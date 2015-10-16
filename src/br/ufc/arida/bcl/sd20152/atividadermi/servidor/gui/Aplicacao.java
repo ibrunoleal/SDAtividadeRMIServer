@@ -70,7 +70,8 @@ public class Aplicacao extends javax.swing.JFrame {
                 }
                 
                 /*
-                atualiza a lista de usuarios conectados
+                atualiza a lista de usuarios conectados no sentido da lista de usuarios para a tabela:
+                adiciona os que conectaram
                 */
                 DefaultTableModel modeloDeTabelaUsuarios = (DefaultTableModel)jTableUsuarios.getModel();
                 for (int i=0; i < ((Chat) servidorDeChat.getServidor()).getUsuarios().size(); i++) {
@@ -80,6 +81,10 @@ public class Aplicacao extends javax.swing.JFrame {
                     }
                 }
                 
+                /*
+                atualiza a lista de usuarios conectados no sentido da tabela para a lista de usuarios:
+                remove os que desconectaram.
+                */
                 DefaultTableModel modeloDeTabelaUsuarios2 = (DefaultTableModel)jTableUsuarios.getModel();
                 for (int i = 0; i < modeloDeTabelaUsuarios2.getRowCount(); i++) {
                     String nick = modeloDeTabelaUsuarios2.getValueAt(i, 0).toString();
@@ -91,6 +96,12 @@ public class Aplicacao extends javax.swing.JFrame {
         }
     };
     
+    /**
+     * Verifica se um usuario apresentado na tabela de usuarios se encontra na lista
+     * de usuarios conectados ao chat.
+     * @param usuario usuario a ser verificado se está na lista de usuários conectados.
+     * @return true se o usuario estiver na lista de conectados e false c.c.
+     */
     public boolean isUsuarioNaTabela(Usuario usuario) {
         for (int i = 0; i < jTableUsuarios.getRowCount(); i++) {
             if (usuario.getNickname().equalsIgnoreCase(jTableUsuarios.getModel().getValueAt(i, 0).toString())) {
