@@ -1,5 +1,6 @@
-package br.ufc.arida.bcl.sd20152.atividadermi.servidor;
+package br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat;
 
+import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Chat;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

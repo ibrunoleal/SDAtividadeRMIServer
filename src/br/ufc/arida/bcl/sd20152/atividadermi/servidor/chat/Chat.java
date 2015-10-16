@@ -1,5 +1,6 @@
-package br.ufc.arida.bcl.sd20152.atividadermi.servidor;
+package br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat;
 
+import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Usuario;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class Chat extends UnicastRemoteObject implements InterfaceDeServidor {
         }
     }
 
-    public boolean isUserInClientes(Usuario usuario) {
+    public synchronized boolean isUserInClientes(Usuario usuario) {
         for (Usuario user : usuarios) {
             if (usuario.equals(user)) {
                 return true;
@@ -94,10 +95,14 @@ public class Chat extends UnicastRemoteObject implements InterfaceDeServidor {
         return false;
     }
 
-    public synchronized List<String> getMensagensDeLog() {
-        return mensagensDeLog;
+    public synchronized List<Usuario> getUsuarios() {
+        List<Usuario> listaDeUsuarios = new ArrayList<Usuario>(usuarios);
+        return listaDeUsuarios;
     }
-    
-    
+
+    public synchronized List<String> getMensagensDeLog() {
+        List<String> listaDeMensagensDeLog = new ArrayList<String>(mensagensDeLog);
+        return listaDeMensagensDeLog;
+    }
 
 }

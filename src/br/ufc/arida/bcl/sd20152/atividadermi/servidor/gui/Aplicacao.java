@@ -3,10 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufc.arida.bcl.sd20152.atividadermi.servidor;
+package br.ufc.arida.bcl.sd20152.atividadermi.servidor.gui;
 
+import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.ServidorDeChat;
+import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Chat;
+import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Usuario;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -42,23 +47,67 @@ public class Aplicacao extends javax.swing.JFrame {
             contadorDeMensagensDeLog++;
         }
         //System.out.println(">debug: saindo no metodo atualizarTelaDeLog");
+        
     }
     
     Thread threadAtualizador = new Thread() {
+        
+        
+        
         @Override
         public void run() {
+            
 
             while (true) {
-                //System.out.println(">debug: entrando no metodo run da thread");
+                /*
+                atualiza as mensagens de log
+                */
                 atualizarTelaDeLog();
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Aplicacao.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+                /*
+                atualiza a lista de usuarios conectados
+                */
+                DefaultTableModel modeloDeTabelaUsuarios = (DefaultTableModel)jTableUsuarios.getModel();
+                for (int i=0; i < ((Chat) servidorDeChat.getServidor()).getUsuarios().size(); i++) {
+                    Usuario usuario = ((Chat) servidorDeChat.getServidor()).getUsuarios().get(i);
+                    if (!isUsuarioNaTabela(usuario)) {
+                        modeloDeTabelaUsuarios.addRow(new Object[]{usuario.getNickname()});
+                    }
+                }
+                
+                DefaultTableModel modeloDeTabelaUsuarios2 = (DefaultTableModel)jTableUsuarios.getModel();
+                for (int i = 0; i < modeloDeTabelaUsuarios2.getRowCount(); i++) {
+                    String nick = modeloDeTabelaUsuarios2.getValueAt(i, 0).toString();
+                    if(!isUsuarioNoChat(nick)) {
+                        modeloDeTabelaUsuarios2.removeRow(i);
+                    }
+                }
             }
         }
     };
+    
+    public boolean isUsuarioNaTabela(Usuario usuario) {
+        for (int i = 0; i < jTableUsuarios.getRowCount(); i++) {
+            if (usuario.getNickname().equalsIgnoreCase(jTableUsuarios.getModel().getValueAt(i, 0).toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean isUsuarioNoChat(String nickname) {
+        for (Usuario user : ((Chat) servidorDeChat.getServidor()).getUsuarios()) {
+            if (user.getNickname().equalsIgnoreCase(nickname)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -69,11 +118,10 @@ public class Aplicacao extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelUsuarios = new javax.swing.JPanel();
-        jScrollPaneUsuarios = new javax.swing.JScrollPane();
-        jTableUsuarios = new javax.swing.JTable();
         jScrollPaneLog = new javax.swing.JScrollPane();
         jTextAreaLog = new javax.swing.JTextArea();
+        jScrollPaneUsuarios = new javax.swing.JScrollPane();
+        jTableUsuarios = new javax.swing.JTable();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jMenuItemIniciar = new javax.swing.JMenuItem();
@@ -86,38 +134,17 @@ public class Aplicacao extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanelUsuarios.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuarios conectados"));
+        jTextAreaLog.setEditable(false);
+        jTextAreaLog.setColumns(20);
+        jTextAreaLog.setRows(5);
+        jScrollPaneLog.setViewportView(jTextAreaLog);
 
         jTableUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null}
+
             },
             new String [] {
-                "nickname"
+                "Usuario"
             }
         ) {
             Class[] types = new Class [] {
@@ -139,28 +166,6 @@ public class Aplicacao extends javax.swing.JFrame {
         if (jTableUsuarios.getColumnModel().getColumnCount() > 0) {
             jTableUsuarios.getColumnModel().getColumn(0).setResizable(false);
         }
-
-        javax.swing.GroupLayout jPanelUsuariosLayout = new javax.swing.GroupLayout(jPanelUsuarios);
-        jPanelUsuarios.setLayout(jPanelUsuariosLayout);
-        jPanelUsuariosLayout.setHorizontalGroup(
-            jPanelUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelUsuariosLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPaneUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanelUsuariosLayout.setVerticalGroup(
-            jPanelUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelUsuariosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPaneUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTextAreaLog.setEditable(false);
-        jTextAreaLog.setColumns(20);
-        jTextAreaLog.setRows(5);
-        jScrollPaneLog.setViewportView(jTextAreaLog);
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("Arquivo");
@@ -217,7 +222,7 @@ public class Aplicacao extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPaneLog, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanelUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -225,8 +230,8 @@ public class Aplicacao extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPaneLog))
+                    .addComponent(jScrollPaneLog, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneUsuarios))
                 .addContainerGap())
         );
 
@@ -288,7 +293,6 @@ public class Aplicacao extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemLimparAreaDeLog;
     private javax.swing.JMenuItem jMenuItemSair;
     private javax.swing.JMenuItem jMenuItemSobre;
-    private javax.swing.JPanel jPanelUsuarios;
     private javax.swing.JScrollPane jScrollPaneLog;
     private javax.swing.JScrollPane jScrollPaneUsuarios;
     private javax.swing.JPopupMenu.Separator jSeparator2;

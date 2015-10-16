@@ -1,4 +1,4 @@
-package br.ufc.arida.bcl.sd20152.atividadermi.servidor;
+package br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat;
 
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeCliente;
 
