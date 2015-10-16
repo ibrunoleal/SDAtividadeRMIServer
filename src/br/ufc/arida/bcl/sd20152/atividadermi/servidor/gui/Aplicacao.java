@@ -39,21 +39,16 @@ public class Aplicacao extends javax.swing.JFrame {
     }
 
     public void atualizarTelaDeLog() {
-        //System.out.println(">debug: entrando no metodo atualizarTelaDeLog");
         int cont = ((Chat) servidorDeChat.getServidor()).getMensagensDeLog().size();
         while (contadorDeMensagensDeLog < cont) {
             System.out.println(">debug: metodo atualizarTelaDeLog loop");
             jTextAreaLog.append(((Chat) servidorDeChat.getServidor()).getMensagensDeLog().get(contadorDeMensagensDeLog) + "\n");
             contadorDeMensagensDeLog++;
         }
-        //System.out.println(">debug: saindo no metodo atualizarTelaDeLog");
-        
     }
     
     Thread threadAtualizador = new Thread() {
-        
-        
-        
+         
         @Override
         public void run() {
             
