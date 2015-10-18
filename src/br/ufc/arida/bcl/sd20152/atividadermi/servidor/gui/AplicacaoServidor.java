@@ -257,7 +257,8 @@ public class AplicacaoServidor extends javax.swing.JFrame {
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
         String sobre = "UFC"
                 + "\nMDCC"
-                + "\nSistemas Distribuídos e Redes de Computadores - 2015-2.\n"
+                + "\nSistemas Distribuídos e Redes de Computadores - 2015-2"
+                + "\nAtividade RMI - Aplicacao Servidor"
                 + "\nAutor: Bruno Leal";
         JOptionPane.showMessageDialog(this, sobre);
     }//GEN-LAST:event_jMenuItemSobreActionPerformed

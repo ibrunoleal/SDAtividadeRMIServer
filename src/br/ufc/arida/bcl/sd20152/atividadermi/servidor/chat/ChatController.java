@@ -66,7 +66,7 @@ public class ChatController extends UnicastRemoteObject implements InterfaceDeSe
     @Override
     public void adicionarCliente(InterfaceDeCliente cliente, String nickname) throws RemoteException {
         Usuario usuario = new Usuario(nickname, cliente);
-        if (isUsuarioNoChat(usuario)) {
+        if (isUsuarioNoChat(usuario) || nickname.equalsIgnoreCase(Chat.nickDoServidor)) {
             String textoDeLog = "Usuario nao pode ser adicionado. Nickname existente: " + nickname;
             adicionarRegistroDeLog(textoDeLog);
         } else {
