@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Aplicacao extends javax.swing.JFrame {
 
-    private ChatController servidorDeChat;
+    private ChatController chatController;
     
     private int contadorDeMensagensDeLog;
     
@@ -29,20 +29,19 @@ public class Aplicacao extends javax.swing.JFrame {
     public Aplicacao() {
         initComponents();
         
-        servidorDeChat = new ChatController();
+        chatController = new ChatController();
         contadorDeMensagensDeLog = 0;
     }
     
     public void iniciarServidorDeChat() {
-        servidorDeChat.executar();
+        chatController.executar();
         threadAtualizador.start();
     }
 
     public void atualizarTelaDeLog() {
-        int cont = ((Chat) servidorDeChat.getServidor()).getMensagensDeLog().size();
+        int cont = chatController.getMensagensDeLog().size();
         while (contadorDeMensagensDeLog < cont) {
-            System.out.println(">debug: metodo atualizarTelaDeLog loop");
-            jTextAreaLog.append(((Chat) servidorDeChat.getServidor()).getMensagensDeLog().get(contadorDeMensagensDeLog) + "\n");
+            jTextAreaLog.append(chatController.getMensagensDeLog().get(contadorDeMensagensDeLog) + "\n");
             contadorDeMensagensDeLog++;
         }
     }
@@ -69,8 +68,8 @@ public class Aplicacao extends javax.swing.JFrame {
                 adiciona os que conectaram
                 */
                 DefaultTableModel modeloDeTabelaUsuarios = (DefaultTableModel)jTableUsuarios.getModel();
-                for (int i=0; i < ((Chat) servidorDeChat.getServidor()).getUsuarios().size(); i++) {
-                    Usuario usuario = ((Chat) servidorDeChat.getServidor()).getUsuarios().get(i);
+                for (int i=0; i < chatController.getUsuariosDoChat().size(); i++) {
+                    Usuario usuario = chatController.getUsuariosDoChat().get(i);
                     if (!isUsuarioNaTabela(usuario)) {
                         modeloDeTabelaUsuarios.addRow(new Object[]{usuario.getNickname()});
                     }
@@ -83,7 +82,7 @@ public class Aplicacao extends javax.swing.JFrame {
                 DefaultTableModel modeloDeTabelaUsuarios2 = (DefaultTableModel)jTableUsuarios.getModel();
                 for (int i = 0; i < modeloDeTabelaUsuarios2.getRowCount(); i++) {
                     String nick = modeloDeTabelaUsuarios2.getValueAt(i, 0).toString();
-                    if(!isUsuarioNoChat(nick)) {
+                    if(chatController.isUsuarioNoChat(nick)) {
                         modeloDeTabelaUsuarios2.removeRow(i);
                     }
                 }
@@ -100,15 +99,6 @@ public class Aplicacao extends javax.swing.JFrame {
     public boolean isUsuarioNaTabela(Usuario usuario) {
         for (int i = 0; i < jTableUsuarios.getRowCount(); i++) {
             if (usuario.getNickname().equalsIgnoreCase(jTableUsuarios.getModel().getValueAt(i, 0).toString())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public boolean isUsuarioNoChat(String nickname) {
-        for (Usuario user : ((Chat) servidorDeChat.getServidor()).getUsuarios()) {
-            if (user.getNickname().equalsIgnoreCase(nickname)) {
                 return true;
             }
         }

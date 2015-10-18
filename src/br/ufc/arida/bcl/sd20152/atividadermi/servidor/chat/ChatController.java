@@ -8,7 +8,10 @@ import java.rmi.registry.Registry;
 
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeServidor;
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.Mensagem;
+import java.rmi.Remote;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ChatController implements InterfaceDeServidor {
 
@@ -37,24 +40,34 @@ public class ChatController implements InterfaceDeServidor {
         } catch (RemoteException e) {
             try {
                 registro = LocateRegistry.getRegistry(InterfaceDeServidor.PORTA);
-                System.out.println(">registro ja existe na porta" + InterfaceDeServidor.PORTA + ". Foi recuperado.");
+                log = "registro ja existe na porta " + InterfaceDeServidor.PORTA + ". Foi recuperado.";
+                adicionarRegistroDeLog(log);
             } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
+                log = "nao foi possivel criar registro do chat na porta " + InterfaceDeServidor.PORTA + ".";
+                adicionarRegistroDeLog(log);
                 e1.printStackTrace();
-                System.exit(0);
+                //System.exit(0);
             }
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        registro.rebind(InterfaceDeServidor.ID_DO_CHAT_RMI, chat);
-        System.out.println(">servidor no servico de nomes");
+        try {
+            registro.rebind(InterfaceDeServidor.ID_DO_CHAT_RMI, (InterfaceDeServidor)chat);
+            log = "servidor registrado no servico de nomes com id: " + InterfaceDeServidor.ID_DO_CHAT_RMI;
+            adicionarRegistroDeLog(log);
+        } catch (RemoteException ex) {
+            log = "nao foi possivel registrar o servidor no servico de nomes com id: " + InterfaceDeServidor.ID_DO_CHAT_RMI;
+            adicionarRegistroDeLog(log);
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     @Override
     public void adicionarCliente(InterfaceDeCliente cliente, String nickname) throws RemoteException {
         Usuario usuario = new Usuario(nickname, cliente);
-        if (isUserInChat(usuario)) {
+        if (isUsuarioNoChat(usuario)) {
             String textoDeLog = "Usuario nao pode ser adicionado. Nickname existente: " + nickname;
             adicionarRegistroDeLog(textoDeLog);
         } else {
@@ -69,12 +82,21 @@ public class ChatController implements InterfaceDeServidor {
 
     @Override
     public void enviarMensagem(Mensagem mensagem) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        chat.enviarMensagem(mensagem);
     }
     
-    public synchronized boolean isUserInChat(Usuario usuario) {
+    public boolean isUsuarioNoChat(Usuario usuario) {
         for (Usuario user : getUsuariosDoChat()) {
             if (usuario.equals(user)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean isUsuarioNoChat(String nickname) {
+        for (Usuario user : getUsuariosDoChat()) {
+            if (user.getNickname().equalsIgnoreCase(nickname)) {
                 return true;
             }
         }
@@ -85,8 +107,12 @@ public class ChatController implements InterfaceDeServidor {
         return chat.getUsuarios();
     }
     
-     public void adicionarRegistroDeLog(String registroDeLog) {
+    public void adicionarRegistroDeLog(String registroDeLog) {
         chat.adicionarRegistroDeLog(registroDeLog);
     }
 
+    public List<String> getMensagensDeLog() {
+        return chat.getMensagensDeLog();
+    }
+    
 }
