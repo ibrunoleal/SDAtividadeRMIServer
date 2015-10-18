@@ -5,7 +5,7 @@
  */
 package br.ufc.arida.bcl.sd20152.atividadermi.servidor.gui;
 
-import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.ServidorDeChat;
+import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.ChatController;
 import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Chat;
 import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Usuario;
 import java.util.List;
@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Aplicacao extends javax.swing.JFrame {
 
-    private ServidorDeChat servidorDeChat;
+    private ChatController servidorDeChat;
     
     private int contadorDeMensagensDeLog;
     
@@ -29,7 +29,7 @@ public class Aplicacao extends javax.swing.JFrame {
     public Aplicacao() {
         initComponents();
         
-        servidorDeChat = new ServidorDeChat();
+        servidorDeChat = new ChatController();
         contadorDeMensagensDeLog = 0;
     }
     

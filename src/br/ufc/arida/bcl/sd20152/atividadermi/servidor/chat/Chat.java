@@ -1,17 +1,13 @@
 package br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat;
 
-import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Usuario;
+import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeCliente;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeCliente;
-import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeServidor;
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.Mensagem;
 
-@SuppressWarnings("serial")
-public class Chat extends UnicastRemoteObject implements InterfaceDeServidor {
+public class Chat {
 
     private int contador;
 
@@ -19,43 +15,49 @@ public class Chat extends UnicastRemoteObject implements InterfaceDeServidor {
 
     private List<String> mensagensDeLog;
 
-    protected Chat() throws RemoteException {
+    protected Chat() {
         this.contador = 0;
         usuarios = new ArrayList<Usuario>();
         mensagensDeLog = new ArrayList<String>();
     }
 
-    @Override
-    public synchronized void adicionarCliente(InterfaceDeCliente cliente, String nickname) throws RemoteException {
-        Usuario usuario = new Usuario(nickname, cliente);
-        if (isUserInClientes(usuario)) {
-            String textoDeLog = ">Usuario nao pode ser adicionado. Nickname existente: " + nickname;
-            mensagensDeLog.add(textoDeLog);
-            System.out.println(textoDeLog);
-        } else {
-            usuarios.add(usuario);
-            String textoDeLog = ">Usuario conectado ao servidor: " + nickname;
-            mensagensDeLog.add(textoDeLog);
-            System.out.println(textoDeLog);
+    public boolean adicionarUsuario(Usuario usuario) {
+        String log;
+        if (this.usuarios.add(usuario)) {
+            log = "Usuario adicionado ao chat com sucesso: " + usuario.getNickname();
+            adicionarRegistroDeLog(log);
+            return true;
         }
-
+        log = "Usuario NAO foi adicionado ao chat: " + usuario.getNickname();
+        return false;
     }
 
-    @Override
-    public synchronized void removerCliente(InterfaceDeCliente cliente) throws RemoteException {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getCliente().equals(cliente)) {
-                usuarios.remove(usuario);
-                String textoDeLog = ">Usuario removido dos assinantes com sucesso: " + usuario.getNickname();
-                mensagensDeLog.add(textoDeLog);
-                System.out.println(textoDeLog);
-                break;
-            }
+    public boolean removerUsuario(Usuario usuario) {
+        String log;
+        if (this.usuarios.remove(usuario)) {
+            log = "Usuario removido do chat com sucesso: " + usuario.getNickname();
+            adicionarRegistroDeLog(log);
+            return true;
         }
+        log = "Usuario NAO foi removido do chat: " + usuario.getNickname();
+        return false;
+    }
+    
+    public boolean removerUsuario(InterfaceDeCliente cliente) {
+        String log;
+        Usuario usuario = getUsuarioDoChat(cliente);
+        if (usuario != null) {
+            usuarios.remove(usuario);
+            log = "Usuario removido do chat com sucesso: " + usuario.getNickname();
+            adicionarRegistroDeLog(log);
+            return true;
+        }
+        log = "Usuario NAO foi removido do chat: usuario nao localizado";
+        adicionarRegistroDeLog(log);
+        return false;
     }
 
-    @Override
-    public synchronized void enviarMensagem(Mensagem mensagem) throws RemoteException {
+    public void enviarMensagem(Mensagem mensagem) {
         mensagem.setId(contador);
         contador++;
         enviarMensagemParaOsClientes(mensagem);
@@ -65,22 +67,12 @@ public class Chat extends UnicastRemoteObject implements InterfaceDeServidor {
         for (Usuario usuario : usuarios) {
             try {
                 usuario.getCliente().receberMensagem(mensagem);
-                String textoDeLog = ">Mensagem enviada para o clietne " + usuario.getNickname() + "->" + mensagem;
-                mensagensDeLog.add(textoDeLog);
-                System.out.println(textoDeLog);
+                String textoDeLog = "Mensagem enviada para o clietne " + usuario.getNickname() + "->" + mensagem;
+                adicionarRegistroDeLog(textoDeLog);
             } catch (RemoteException e) {
-                String textoDeLog = ">Não foi possível enviar mensagem para o cliente" + usuario.getNickname() + "->" + mensagem;
-                mensagensDeLog.add(textoDeLog);
-                System.out.println(textoDeLog);
-                try {
-                    removerCliente(usuario.getCliente());
-                } catch (RemoteException e1) {
-                    System.out.println();
-                    String textoDeLog2 = ">Erro ao remover cliente" + usuario.getNickname();
-                    mensagensDeLog.add(textoDeLog2);
-                    System.out.println(textoDeLog2);
-                    e1.printStackTrace();
-                }
+                String textoDeLog = "Não foi possível enviar mensagem para o cliente" + usuario.getNickname() + "->" + mensagem;
+                adicionarRegistroDeLog(textoDeLog);
+                removerUsuario(usuario);
                 e.printStackTrace();
             }
         }
@@ -103,6 +95,21 @@ public class Chat extends UnicastRemoteObject implements InterfaceDeServidor {
     public synchronized List<String> getMensagensDeLog() {
         List<String> listaDeMensagensDeLog = new ArrayList<String>(mensagensDeLog);
         return listaDeMensagensDeLog;
+    }
+    
+    public void adicionarRegistroDeLog(String registroDeLog) {
+        String log = ">" + registroDeLog;
+        mensagensDeLog.add(log);
+        System.out.println(log);
+    }
+    
+    public Usuario getUsuarioDoChat(InterfaceDeCliente cliente) {
+        for (Usuario usuario : getUsuarios()) {
+            if (usuario.getCliente().equals(cliente)) {
+                return usuario;
+            }
+        }
+        return null;
     }
 
 }
