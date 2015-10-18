@@ -6,6 +6,7 @@ import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Usuario;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -81,7 +82,7 @@ public class AplicacaoServidor extends javax.swing.JFrame {
                 DefaultTableModel modeloDeTabelaUsuarios2 = (DefaultTableModel)jTableUsuarios.getModel();
                 for (int i = 0; i < modeloDeTabelaUsuarios2.getRowCount(); i++) {
                     String nick = modeloDeTabelaUsuarios2.getValueAt(i, 0).toString();
-                    if(chatController.isUsuarioNoChat(nick)) {
+                    if(!chatController.isUsuarioNoChat(nick)) {
                         modeloDeTabelaUsuarios2.removeRow(i);
                     }
                 }
@@ -129,6 +130,8 @@ public class AplicacaoServidor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jScrollPaneLog.setBorder(javax.swing.BorderFactory.createTitledBorder("Log do Servidor"));
+
         jTextAreaLog.setEditable(false);
         jTextAreaLog.setColumns(20);
         jTextAreaLog.setRows(5);
@@ -139,7 +142,7 @@ public class AplicacaoServidor extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Usuario"
+                "Usuarios"
             }
         ) {
             Class[] types = new Class [] {
@@ -157,6 +160,7 @@ public class AplicacaoServidor extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTableUsuarios.getTableHeader().setReorderingAllowed(false);
         jScrollPaneUsuarios.setViewportView(jTableUsuarios);
         if (jTableUsuarios.getColumnModel().getColumnCount() > 0) {
             jTableUsuarios.getColumnModel().getColumn(0).setResizable(false);
@@ -203,6 +207,11 @@ public class AplicacaoServidor extends javax.swing.JFrame {
 
         jMenuItemSobre.setMnemonic('a');
         jMenuItemSobre.setText("Sobre");
+        jMenuItemSobre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSobreActionPerformed(evt);
+            }
+        });
         helpMenu.add(jMenuItemSobre);
 
         menuBar.add(helpMenu);
@@ -244,6 +253,14 @@ public class AplicacaoServidor extends javax.swing.JFrame {
     private void jMenuItemLimparAreaDeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparAreaDeLogActionPerformed
         jTextAreaLog.setText("");
     }//GEN-LAST:event_jMenuItemLimparAreaDeLogActionPerformed
+
+    private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
+        String sobre = "UFC"
+                + "\nMDCC"
+                + "\nSistemas Distribuídos e Redes de Computadores - 2015-2.\n"
+                + "\nAutor: Bruno Leal";
+        JOptionPane.showMessageDialog(this, sobre);
+    }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
     /**
      * @param args the command line arguments
