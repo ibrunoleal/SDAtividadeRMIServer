@@ -1,26 +1,25 @@
 package br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat;
 
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeCliente;
-import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Chat;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeServidor;
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.Mensagem;
-import java.rmi.Remote;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ChatController implements InterfaceDeServidor {
+public class ChatController extends UnicastRemoteObject implements InterfaceDeServidor {
 
     private Registry registro;
 
     private Chat chat;
 
-    public ChatController() {
-
+    public ChatController() throws RemoteException{
+        chat = new Chat();
     }
 
     public void executar() {
@@ -53,7 +52,7 @@ public class ChatController implements InterfaceDeServidor {
         }
 
         try {
-            registro.rebind(InterfaceDeServidor.ID_DO_CHAT_RMI, (InterfaceDeServidor)chat);
+            registro.rebind(InterfaceDeServidor.ID_DO_CHAT_RMI, this);
             log = "servidor registrado no servico de nomes com id: " + InterfaceDeServidor.ID_DO_CHAT_RMI;
             adicionarRegistroDeLog(log);
         } catch (RemoteException ex) {

@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package br.ufc.arida.bcl.sd20152.atividadermi.servidor.gui;
 
 import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.ChatController;
-import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Chat;
 import br.ufc.arida.bcl.sd20152.atividadermi.servidor.chat.Usuario;
-import java.util.List;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author brunoleal
  */
-public class Aplicacao extends javax.swing.JFrame {
+public class AplicacaoServidor extends javax.swing.JFrame {
 
     private ChatController chatController;
     
@@ -26,10 +21,14 @@ public class Aplicacao extends javax.swing.JFrame {
     /**
      * Creates new form Aplicacao
      */
-    public Aplicacao() {
+    public AplicacaoServidor() {
         initComponents();
         
-        chatController = new ChatController();
+        try {
+            chatController = new ChatController();
+        } catch (RemoteException ex) {
+            Logger.getLogger(AplicacaoServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
         contadorDeMensagensDeLog = 0;
     }
     
@@ -60,7 +59,7 @@ public class Aplicacao extends javax.swing.JFrame {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(Aplicacao.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(AplicacaoServidor.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
                 /*
@@ -263,20 +262,21 @@ public class Aplicacao extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Aplicacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AplicacaoServidor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Aplicacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AplicacaoServidor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Aplicacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AplicacaoServidor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Aplicacao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AplicacaoServidor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Aplicacao().setVisible(true);
+                new AplicacaoServidor().setVisible(true);
             }
         });
     }
