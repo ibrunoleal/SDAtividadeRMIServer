@@ -28,8 +28,6 @@ public class Chat {
         if (this.usuarios.add(usuario)) {
             log = "Usuario adicionado ao chat com sucesso: " + usuario.getNickname();
             adicionarRegistroDeLog(log);
-            Mensagem m = new Mensagem("@Servidor", "[" + usuario.getNickname() + " entrou no chat]");
-            enviarMensagem(m);
             return true;
         }
         log = "Usuario NAO foi adicionado ao chat: " + usuario.getNickname();
@@ -41,8 +39,6 @@ public class Chat {
         if (this.usuarios.remove(usuario)) {
             log = "Usuario removido do chat com sucesso: " + usuario.getNickname();
             adicionarRegistroDeLog(log);
-            Mensagem m = new Mensagem("@Servidor", "[" + usuario.getNickname() + " saiu do chat]");
-            enviarMensagem(m);
             return true;
         }
         log = "Usuario NAO foi removido do chat: " + usuario.getNickname();
@@ -56,8 +52,6 @@ public class Chat {
             usuarios.remove(usuario);
             log = "Usuario removido do chat com sucesso: " + usuario.getNickname();
             adicionarRegistroDeLog(log);
-            Mensagem m = new Mensagem("@Servidor", "[" + usuario.getNickname() + " saiu do chat]");
-            enviarMensagem(m);
             return true;
         }
         log = "Usuario NAO foi removido do chat: usuario nao localizado";

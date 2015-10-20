@@ -46,6 +46,32 @@ public class AplicacaoServidor extends javax.swing.JFrame {
         }
     }
     
+    public void atualizarTelaDeUsuariosConectados() {
+        /*
+         atualiza a lista de usuarios conectados no sentido da lista de usuarios para a tabela:
+         adiciona os que conectaram
+         */
+        DefaultTableModel modeloDeTabelaUsuarios = (DefaultTableModel) jTableUsuarios.getModel();
+        for (int i = 0; i < chatController.getUsuariosDoChat().size(); i++) {
+            Usuario usuario = chatController.getUsuariosDoChat().get(i);
+            if (!isUsuarioNaTabela(usuario)) {
+                modeloDeTabelaUsuarios.addRow(new Object[]{usuario.getNickname()});
+            }
+        }
+
+        /*
+         atualiza a lista de usuarios conectados no sentido da tabela para a lista de usuarios:
+         remove os que desconectaram.
+         */
+        DefaultTableModel modeloDeTabelaUsuarios2 = (DefaultTableModel) jTableUsuarios.getModel();
+        for (int i = 0; i < modeloDeTabelaUsuarios2.getRowCount(); i++) {
+            String nick = modeloDeTabelaUsuarios2.getValueAt(i, 0).toString();
+            if (!chatController.isUsuarioNoChat(nick)) {
+                modeloDeTabelaUsuarios2.removeRow(i);
+            }
+        }
+    }
+    
     Thread threadAtualizador = new Thread() {
          
         @Override
@@ -57,35 +83,18 @@ public class AplicacaoServidor extends javax.swing.JFrame {
                 atualiza as mensagens de log
                 */
                 atualizarTelaDeLog();
+                
+                /*
+                atualiza a lista de nicknames na tabela de usuarios conectados
+                */
+                atualizarTelaDeUsuariosConectados();
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(AplicacaoServidor.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                /*
-                atualiza a lista de usuarios conectados no sentido da lista de usuarios para a tabela:
-                adiciona os que conectaram
-                */
-                DefaultTableModel modeloDeTabelaUsuarios = (DefaultTableModel)jTableUsuarios.getModel();
-                for (int i=0; i < chatController.getUsuariosDoChat().size(); i++) {
-                    Usuario usuario = chatController.getUsuariosDoChat().get(i);
-                    if (!isUsuarioNaTabela(usuario)) {
-                        modeloDeTabelaUsuarios.addRow(new Object[]{usuario.getNickname()});
-                    }
-                }
                 
-                /*
-                atualiza a lista de usuarios conectados no sentido da tabela para a lista de usuarios:
-                remove os que desconectaram.
-                */
-                DefaultTableModel modeloDeTabelaUsuarios2 = (DefaultTableModel)jTableUsuarios.getModel();
-                for (int i = 0; i < modeloDeTabelaUsuarios2.getRowCount(); i++) {
-                    String nick = modeloDeTabelaUsuarios2.getValueAt(i, 0).toString();
-                    if(!chatController.isUsuarioNoChat(nick)) {
-                        modeloDeTabelaUsuarios2.removeRow(i);
-                    }
-                }
             }
         }
     };

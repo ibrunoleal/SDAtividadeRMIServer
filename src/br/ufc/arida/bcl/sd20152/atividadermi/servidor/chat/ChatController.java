@@ -8,6 +8,7 @@ import java.rmi.registry.Registry;
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeServidor;
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.Mensagem;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,24 +65,35 @@ public class ChatController extends UnicastRemoteObject implements InterfaceDeSe
     }
 
     @Override
-    public void adicionarCliente(InterfaceDeCliente cliente, String nickname) throws RemoteException {
+    public boolean adicionarCliente(InterfaceDeCliente cliente, String nickname) throws RemoteException {
         Usuario usuario = new Usuario(nickname, cliente);
         if (isUsuarioNoChat(usuario) || nickname.equalsIgnoreCase(Chat.nickDoServidor)) {
             String textoDeLog = "Usuario nao pode ser adicionado. Nickname existente: " + nickname;
             adicionarRegistroDeLog(textoDeLog);
+            return false;
         } else {
-            chat.adicionarUsuario(usuario);
+            return chat.adicionarUsuario(usuario);
         }
     }
 
     @Override
-    public void removerCliente(InterfaceDeCliente cliente) throws RemoteException {
-       chat.removerUsuario(cliente);
+    public boolean removerCliente(InterfaceDeCliente cliente) throws RemoteException {
+       return chat.removerUsuario(cliente);
     }
 
     @Override
     public void enviarMensagem(Mensagem mensagem) throws RemoteException {
         chat.enviarMensagem(mensagem);
+    }
+    
+    @Override
+    public List<String> getNicknamesDosUsuarios() throws RemoteException {
+        List<String> listaDeNicknameDosUsuarios = new ArrayList<String>();
+        for (Usuario usuario : getUsuariosDoChat()) {
+            String nick = usuario.getNickname();
+            listaDeNicknameDosUsuarios.add(nick);
+        }
+        return listaDeNicknameDosUsuarios;
     }
     
     public boolean isUsuarioNoChat(Usuario usuario) {
@@ -113,5 +125,7 @@ public class ChatController extends UnicastRemoteObject implements InterfaceDeSe
     public List<String> getMensagensDeLog() {
         return chat.getMensagensDeLog();
     }
+
+  
     
 }
