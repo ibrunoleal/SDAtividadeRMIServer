@@ -260,18 +260,26 @@ public class AplicacaoServidor extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemIniciarActionPerformed
 
     private void jMenuItemLimparAreaDeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparAreaDeLogActionPerformed
-        jTextAreaLog.setText("");
+        limparTelaDeLog();
     }//GEN-LAST:event_jMenuItemLimparAreaDeLogActionPerformed
 
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
+        exibirTelaSobre();
+    }//GEN-LAST:event_jMenuItemSobreActionPerformed
+    
+    public void limparTelaDeLog() {
+        jTextAreaLog.setText("");
+    }
+    
+    public void exibirTelaSobre() {
         String sobre = "UFC"
                 + "\nMDCC"
                 + "\nSistemas Distribuídos e Redes de Computadores - 2015-2"
                 + "\nAtividade RMI - Aplicacao Servidor"
                 + "\nAutor: Bruno Leal";
         JOptionPane.showMessageDialog(this, sobre);
-    }//GEN-LAST:event_jMenuItemSobreActionPerformed
-
+    }
+    
     /**
      * @param args the command line arguments
      */
