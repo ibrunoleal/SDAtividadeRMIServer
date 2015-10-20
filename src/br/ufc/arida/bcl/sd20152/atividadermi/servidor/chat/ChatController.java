@@ -125,7 +125,5 @@ public class ChatController extends UnicastRemoteObject implements InterfaceDeSe
     public List<String> getMensagensDeLog() {
         return chat.getMensagensDeLog();
     }
-
-  
     
 }
