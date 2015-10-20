@@ -92,6 +92,9 @@ public class AplicacaoServidor extends javax.swing.JFrame {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(AplicacaoServidor.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception e) {
+                    String log = "nao foi possivel atualizar os componentes de tela do chat.";
+                    chatController.adicionarRegistroDeLog(log);
                 }
                 
                 
