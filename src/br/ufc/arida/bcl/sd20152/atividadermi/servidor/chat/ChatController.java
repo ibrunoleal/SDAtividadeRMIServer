@@ -7,17 +7,23 @@ import java.rmi.registry.Registry;
 
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.InterfaceDeServidor;
 import br.ufc.arida.bcl.sd20152.atividadermi.lib.Mensagem;
+import java.rmi.Remote;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ChatController extends UnicastRemoteObject implements InterfaceDeServidor {
+public class ChatController extends UnicastRemoteObject implements InterfaceDeServidor, Remote {
 
     private Registry registro;
 
     private Chat chat;
+    
+    //private final String IP_SERVIDOR = "localhost";
+    private final int PORTA = 1099;
+    private final String ID_DO_SERVICO = "chatrmi";
+    //private final String registroDeRMI = "rmi://" + IP_SERVIDOR + ":" + PORTA + "/" + ID_DO_SERVICO;
 
     public ChatController() throws RemoteException{
         chat = new Chat();
@@ -32,18 +38,17 @@ public class ChatController extends UnicastRemoteObject implements InterfaceDeSe
         log = "Chat criado";
         chat.adicionarRegistroDeLog(log);
 
-
         try {
-            registro = LocateRegistry.createRegistry(InterfaceDeServidor.PORTA);
-            log = "registro criado na porta " + InterfaceDeServidor.PORTA;
+            registro = LocateRegistry.createRegistry(PORTA);
+            log = "registro criado na porta " + PORTA;
             adicionarRegistroDeLog(log);
         } catch (RemoteException e) {
             try {
-                registro = LocateRegistry.getRegistry(InterfaceDeServidor.PORTA);
-                log = "registro ja existe na porta " + InterfaceDeServidor.PORTA + ". Foi recuperado.";
+                registro = LocateRegistry.getRegistry(PORTA);
+                log = "registro ja existe na porta " + PORTA + ". Foi recuperado.";
                 adicionarRegistroDeLog(log);
             } catch (RemoteException e1) {
-                log = "nao foi possivel criar registro do chat na porta " + InterfaceDeServidor.PORTA + ".";
+                log = "nao foi possivel criar registro do chat na porta " + PORTA + ".";
                 adicionarRegistroDeLog(log);
                 e1.printStackTrace();
                 //System.exit(0);
@@ -53,11 +58,11 @@ public class ChatController extends UnicastRemoteObject implements InterfaceDeSe
         }
 
         try {
-            registro.rebind(InterfaceDeServidor.ID_DO_CHAT_RMI, this);
-            log = "servidor registrado no servico de nomes com id: " + InterfaceDeServidor.ID_DO_CHAT_RMI;
+            registro.rebind(ID_DO_SERVICO, this);
+            log = "servidor registrado no servico de nomes com id: " + ID_DO_SERVICO;
             adicionarRegistroDeLog(log);
         } catch (RemoteException ex) {
-            log = "nao foi possivel registrar o servidor no servico de nomes com id: " + InterfaceDeServidor.ID_DO_CHAT_RMI;
+            log = "nao foi possivel registrar o servidor no servico de nomes com id: " + ID_DO_SERVICO;
             adicionarRegistroDeLog(log);
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
